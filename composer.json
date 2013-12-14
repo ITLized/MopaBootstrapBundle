@@ -1,5 +1,5 @@
 {
-    "name": "mopa/bootstrap-bundle",
+    "name": "itlized/mopa-bootstrap-bundle",
     "type": "symfony-bundle",
     "description": "Easy integration of twitters bootstrap into symfony2",
     "keywords": ["form", "extra form", "bootstrap", "bootstrap form", "template"],
@@ -8,6 +8,10 @@
         {
             "name": "Philipp A. Mohrenweiser",
             "email": "phiamo@googlemail.com"
+        },
+        {
+            "name": "Michael Bui",
+            "email": "michael@itlized.com"
         },
         {
             "name": "Community contributions",
