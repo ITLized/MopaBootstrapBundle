@@ -22,7 +22,7 @@
 {# Widgets #}
 
 {% block choice_widget_collapsed %}
-    {% set attr = attr|merge({'class': attr.class|default('') ~ ' form-control'}) %}
+    {% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ widget_form_control_class}) %}
     {{ parent() }}
     {% if horizontal %}
         {{ block('form_message') }}
@@ -30,10 +30,25 @@
 {% endblock choice_widget_collapsed %}
 
 {% block textarea_widget %}
-{% set attr = attr|merge({'class': attr.class|default('') ~ ' form-control'}) %}
+    {% set type = type|default('text') %}
+    {% if type != 'hidden' and ( widget_addon_prepend|default(null) is not null or widget_addon_append|default(null) is not null ) %}
+    <div class="input-group">
+        {% if widget_addon_prepend|default(null) is not null %}
+            {% set widget_addon = widget_addon_prepend %}
+            {{ block('widget_addon') }}
+        {% endif %}
+    {% endif %}
+    {% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ widget_form_control_class}) %}
     {{ parent() }}
     {% if horizontal %}
             {{ block('form_message') }}
+    {% endif %}
+    {% if type != 'hidden' and ( widget_addon_prepend|default(null) is not null or widget_addon_append|default(null) is not null ) %}
+        {% if widget_addon_append|default(null) is not null %}
+        {% set widget_addon = widget_addon_append %}
+        {{ block('widget_addon') }}
+        {% endif %}
+    </div>
     {% endif %}
 {% endblock textarea_widget %}
 
@@ -50,7 +65,7 @@
     {% if not widget_remove_btn|default(null) %}
         {% set attr = attr|merge({'class': attr.class|default('') ~ ' not-removable'}) %}
     {% endif %}
-    {% set attr = attr|merge({'class': attr.class|default('') ~ ' form-control'}) %}
+    {% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ widget_form_control_class}) %}
     {{ parent() }}
     {% if type != 'hidden' and ( widget_addon_prepend|default(null) is not null or widget_addon_append|default(null) is not null ) %}
         {% if widget_addon_append|default(null) is not null %}
@@ -205,7 +220,7 @@
 {% if widget == 'single_text' %}
     {% if datepicker is defined %}
         <div data-provider="datepicker" class="input-group date" data-date="{{ value }}" data-link-field="{{ id }}" data-link-format="yyyy-mm-dd">
-            <input class="form-control" type="text" {% if read_only %} readonly="readonly"{% endif %}{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}>
+            <input {% if widget_form_control_class is not sameas(false) %}class="{{ widget_form_control_class }}" {% endif %}type="text" {% if read_only %} readonly="readonly"{% endif %}{% if disabled %} disabled="disabled"{% endif %}{% if required %} required="required"{% endif %}>
             <input type="hidden" value="{{ value }}" {{ block('widget_attributes') }}>
             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
         </div>
@@ -294,7 +309,7 @@
 {% block file_widget %}
 {% spaceless %}
 {% set type = type|default('file') %}
-{% set attr = attr|merge({'class': attr.class|default('') ~ ' form-control'}) %}
+{% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ widget_form_control_class}) %}
     {% if widget_addon_prepend|default(null) is not null %}
         {% set widget_addon = widget_addon_prepend %}
         {{ block('widget_addon') }}
@@ -504,7 +519,8 @@
 {% block widget_addon %}
 {% spaceless %}
 {% set widget_addon_icon = widget_addon.icon is defined ? widget_addon.icon : null  %}
-    <span class="input-group-addon">{{ (widget_addon.text|default(false) ? widget_addon.text|trans({}, translation_domain)|raw : mopa_bootstrap_icon(widget_addon_icon)) }}</span>
+{% set widget_addon_icon_inverted = widget_addon.icon_inverted is defined ? widget_addon.icon_inverted : false  %}
+    <span class="input-group-addon">{{ (widget_addon.text|default(false) ? widget_addon.text|trans({}, translation_domain)|raw : mopa_bootstrap_icon(widget_addon_icon, widget_addon_icon_inverted)) }}</span>
 {% endspaceless %}
 {% endblock widget_addon %}
 
